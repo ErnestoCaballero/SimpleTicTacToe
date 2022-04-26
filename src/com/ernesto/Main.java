@@ -62,19 +62,10 @@ public class Main {
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[i].length; j++) {
                     grid[i][j] = input.charAt(count);
-                    if (input.charAt(count) == 'X') {
-                        countX++;
-                    } else if (input.charAt(count) == 'O') {
-                        countO++;
-                    } else if (input.charAt(count) == '_') {
-                        countB++;
-                    } else {
-                        System.out.println("Not a valid input!");
-                        System.exit(0);
-                    }
                     count++;
                 }
             }
+            countB = 9;
         }
 
         public char[][] getGrid() {
