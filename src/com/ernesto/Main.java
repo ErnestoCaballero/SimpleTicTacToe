@@ -1,27 +1,53 @@
 package com.ernesto;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter cells: ");
-        String input = scanner.nextLine();
-
-        TicTacToe game = new TicTacToe(input);
+        TicTacToe game = new TicTacToe();
+        GameState state;
+        int turn = 0;
 
         game.printGrid();
-        game.selectCell();
-        game.printGrid();
+
+        while (true) {
+            game.selectCell(turn);
+            turn++;
+            game.printGrid();
+            state = game.checkState();
+
+            switch (state) {
+                case DRAW:
+                    System.out.println("Draw");
+                    System.exit(0);
+                case X_WINS:
+                    System.out.println("X wins");
+                    System.exit(0);
+                case O_WINS:
+                    System.out.println("O wins");
+                    System.exit(0);
+                case IMPOSSIBLE:
+                    System.out.println("Impossible");
+                    System.exit(0);
+                case UNDEFINED:
+                    System.out.println("Not a valid state");
+                    System.exit(0);
+                default:
+                    break;
+            }
+        }
     }
 
-    enum gameState {
+    enum GameState {
         NOT_FINISHED,
         DRAW,
         X_WINS,
         O_WINS,
-        IMPOSSIBLE
+        IMPOSSIBLE,
+        UNDEFINED
     }
 
     static class TicTacToe {
@@ -29,9 +55,9 @@ public class Main {
         int countX;
         int countO;
         int countB;
-        gameState state;
 
-        TicTacToe(String input) {
+        TicTacToe() {
+            String input = "_________";
             int count = 0;
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[i].length; j++) {
@@ -75,28 +101,24 @@ public class Main {
             System.out.println("---------");
         }
 
-        void checkState() {
+        GameState checkState() {
             if (Math.abs(countX - countO) > 1 || checkWins('X') && checkWins('O')) {
-                state = gameState.IMPOSSIBLE;
-                System.out.println("Impossible");
-            } else if (!checkWins('X') && !checkWins('O') && countB > 0) {
-                state = gameState.NOT_FINISHED;
-                System.out.println("Game not finished");
+                return GameState.IMPOSSIBLE;
             } else if (!checkWins('X') && !checkWins('O') && countB == 0) {
-                state = gameState.DRAW;
-                System.out.println("Draw");
+                return GameState.DRAW;
             } else if (checkWins('X')) {
-                state = gameState.X_WINS;
-                System.out.println("X wins");
+                return GameState.X_WINS;
             } else if (checkWins('O')) {
-                state = gameState.O_WINS;
-                System.out.println("O wins");
+                return GameState.O_WINS;
+            } else if (!checkWins('X') && !checkWins('O') && countB > 0) {
+                return GameState.NOT_FINISHED;
             } else {
-                System.out.println("Not a valid state");
+                return GameState.UNDEFINED;
             }
         }
 
-        void selectCell() {
+        void selectCell(int turn) {
+            char mark = turn % 2 == 0 ? 'X' : 'O';
             Scanner scanner = new Scanner(System.in);
             String row1;
             String column1;
@@ -125,11 +147,19 @@ public class Main {
                 } else if ('X' == grid[row - 1][column - 1] || 'O' == grid[row - 1][column - 1]) {
                     System.out.println("This cell is occupied! Choose another one!");
                 } else {
-                    grid[row - 1][column - 1] = 'X';
+                    grid[row - 1][column - 1] = mark;
+                    if (mark == 'X') {
+                        countX++;
+                        countB--;
+                    }
+
+                    if (mark == 'O') {
+                        countO++;
+                        countB--;
+                    }
                     break;
                 }
             }
-
         }
 
         boolean checkWins(char c) {
@@ -193,7 +223,6 @@ public class Main {
 
             return false;
         }
-
 
     }
 }
