@@ -68,12 +68,8 @@ public class Main {
 
         void printGrid() {
             System.out.println("---------");
-            for (int i = 0; i < 3; i++) {
-                System.out.print("| ");
-                for (int j = 0; j < 3; j++) {
-                    System.out.printf("%c ", grid[i][j]);
-                }
-                System.out.printf("|%n");
+            for (int i = 0; i < grid.length; i++) {
+                System.out.printf("| %c %c %c |%n", grid[i][0], grid[i][1], grid[i][2]);
             }
             System.out.println("---------");
         }
