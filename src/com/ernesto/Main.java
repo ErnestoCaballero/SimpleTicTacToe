@@ -6,17 +6,13 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.printf("Enter cells: ");
+        System.out.print("Enter cells: ");
         String input = scanner.nextLine();
 
         TicTacToe game = new TicTacToe(input);
 
         game.printGrid();
-
-        System.out.println(game.getCountX());
-        System.out.println(game.getCountO());
-        System.out.println(game.getCountB());
-        System.out.println(game.checkWins('X'));
+        game.checkState();
     }
 
     enum gameState {
@@ -32,8 +28,7 @@ public class Main {
         int countX;
         int countO;
         int countB;
-        boolean xWins;
-        boolean yWins;
+        gameState state;
 
         TicTacToe(String input) {
             int count = 0;
@@ -48,7 +43,7 @@ public class Main {
                         countB++;
                     } else {
                         System.out.println("Not a valid input!");
-                        return;
+                        System.exit(0);
                     }
                     count++;
                 }
@@ -84,23 +79,35 @@ public class Main {
         }
 
         void checkState() {
-            if (Math.abs(countX - countO) > 2) {
+            if (Math.abs(countX - countO) > 1 || checkWins('X') && checkWins('O')) {
+                state = gameState.IMPOSSIBLE;
                 System.out.println("Impossible");
+            } else if (!checkWins('X') && !checkWins('O') && countB > 0) {
+                state = gameState.NOT_FINISHED;
+                System.out.println("Game not finished");
+            } else if (!checkWins('X') && !checkWins('O') && countB == 0) {
+                state = gameState.DRAW;
+                System.out.println("Draw");
+            } else if (checkWins('X')) {
+                state = gameState.X_WINS;
+                System.out.println("X wins");
+            } else if (checkWins('O')) {
+                state = gameState.O_WINS;
+                System.out.println("O wins");
+            } else {
+                System.out.println("Not a valid state");
             }
-
-
-
-
         }
 
         boolean checkWins(char c) {
             boolean win = true;
-            if (c == 'X' || c == 'Y') {
+            if (c == 'X' || c == 'O') {
                 // check columns
                 for (int i = 0; i < grid.length; i++) {
                     for (int j = 0; j < grid[i].length; j++) {
                         if (grid[j][i] != c) {
                             win = false;
+                            break;
                         }
                     }
 
@@ -116,6 +123,7 @@ public class Main {
                     for (int j = 0; j < grid[i].length; j++) {
                         if (grid[i][j] != c) {
                             win = false;
+                            break;
                         }
                     }
 
@@ -130,6 +138,7 @@ public class Main {
                 for (int i = 0; i < grid.length; i++) {
                     if (grid[i][i] != c) {
                         win = false;
+                        break;
                     }
                 }
                 if (win) {
@@ -142,14 +151,11 @@ public class Main {
                 for (int i = 0; i < grid.length; i++) {
                     if (grid[i][grid.length - 1 - i] != c) {
                         win = false;
+                        break;
                     }
                 }
-                if (win) {
-                    return true;
-                }
-            } else {
-                System.out.println("Not a valid symbol!");
-                return false;
+
+                return win;
             }
 
             return false;
