@@ -12,7 +12,8 @@ public class Main {
         TicTacToe game = new TicTacToe(input);
 
         game.printGrid();
-        game.checkState();
+        game.selectCell();
+        game.printGrid();
     }
 
     enum gameState {
@@ -93,6 +94,42 @@ public class Main {
             } else {
                 System.out.println("Not a valid state");
             }
+        }
+
+        void selectCell() {
+            Scanner scanner = new Scanner(System.in);
+            String row1;
+            String column1;
+
+            while (true) {
+                System.out.print("Enter the coordinates: ");
+
+                row1 = scanner.next();
+                if (!row1.matches("\\d+")) {
+                    System.out.println("You should enter numbers!");
+                    scanner.nextLine();
+                    continue;
+                }
+
+                column1 = scanner.next();
+                if (!column1.matches("\\d+")) {
+                    System.out.println("You should enter numbers!");
+                    continue;
+                }
+
+                int row = Integer.parseInt(row1);
+                int column = Integer.parseInt(column1);
+
+                if (row > grid.length || column > grid.length || row < 0 || column < 0) {
+                    System.out.println("Coordinates should be from 1 to 3!");
+                } else if ('X' == grid[row - 1][column - 1] || 'O' == grid[row - 1][column - 1]) {
+                    System.out.println("This cell is occupied! Choose another one!");
+                } else {
+                    grid[row - 1][column - 1] = 'X';
+                    break;
+                }
+            }
+
         }
 
         boolean checkWins(char c) {
